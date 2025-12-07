@@ -1,0 +1,75 @@
+# Logs
+logs
+*.log
+
+# Python
+*.py[cod]
+*.pyo
+__pycache__/
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+
+# Django
+*.log
+*.pot
+*.pyc
+*.pyo
+*.pyd
+*.sqlite3
+db.sqlite3
+.DS_Store
+
+# Virtualenv
+venv/
+ENV/
+env/
+.venv/
+.ENV/
+
+# Pipenv
+Pipfile
+Pipfile.lock
+
+# VSCode
+.vscode/
+
+# PyCharm
+.idea/
+
+# Byte-compiled / optimized / DLL files
+*.py[cod]
+*.pyo
+
+# Test coverage
+htmlcov/
+.tox/
+.coverage
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+
+# Migrations
+# */migrations/*.py
+# !*/migrations/__init__.py
+
+# local environment
+.env
+*.env
+.env.development.local
+.env.development
+.env.test.local
+.env.production.local
+.env.production
+.env.local
+
+# Backup files
+*.bak
+*.swp
+
+# Whitenoise
+.whitenoise/
+staticfiles/
