@@ -9,7 +9,8 @@ import type { Annotation } from '../types/api.types';
 export const AnalyticsPage = () => {
   const navigate = useNavigate();
   const user = useAuthStore(state => state.user);
-  const { data: files = [] } = useDicomFiles();
+  const { data: dicomFileList } = useDicomFiles();
+  const files = dicomFileList?.items || [];
   const { data: annotations = { items: [] } } = useAnnotations();
 
   // Ensure annotations is always an array

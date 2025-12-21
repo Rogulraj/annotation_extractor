@@ -148,12 +148,12 @@ export class CustomRectangleRoiTool extends cornerstoneTools.RectangleRoiTool {
 
         const left = Math.min(startCanvas.x, endCanvas.x);
         const right = Math.max(startCanvas.x, endCanvas.x);
-        const bottom = Math.max(startCanvas.y, endCanvas.y);
+        // const bottom = Math.max(startCanvas.y, endCanvas.y);
         const top = Math.min(startCanvas.y, endCanvas.y);
 
 
         // Calculate the center of the bottom edge
-        const centerX = (left + right) / 2;
+        // const centerX = (left + right) / 2;
 
         if(AppToolConfig?.showDeleteIconForCustomRectangleRoi) {
 
