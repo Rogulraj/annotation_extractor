@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+  namespace: myapp
+data:
+  DJANGO_ALLOWED_HOSTS: "*"
+  DJANGO_DEBUG: "False"
+  DB_NAME: "myappdb"
+
