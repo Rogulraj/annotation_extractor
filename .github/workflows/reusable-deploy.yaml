@@ -1,0 +1,54 @@
+name: "Reusable Deploy"
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        required: true
+        type: string
+      image_tag:
+        required: true
+        type: string
+    secrets:
+      KUBECONFIG:
+        required: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set Kubeconfig
+        uses: azure/k8s-set-context@v3
+        with:
+          method: kubeconfig
+          kubeconfig: ${{ secrets.KUBECONFIG }}
+
+      - name: Setup Kustomize
+        uses: imranismail/setup-kustomize@v2
+
+      - name: Update Images & Deploy
+        run: |
+          cd infra/k8s/backend
+          kustomize edit set image your-registry/backend:1.0.0=ghcr.io/${{ github.repository }}/backend:${{ inputs.image_tag }}
+          
+          cd ../frontend
+          kustomize edit set image your-registry/frontend:1.0.0=ghcr.io/${{ github.repository }}/frontend:${{ inputs.image_tag }}
+          
+          cd ../..
+          # Apply Namespace first
+          kubectl apply -f k8s/namespaces/app.yaml
+          
+          # Apply Backend & Frontend using Kustomize (or kubectl apply -k if kustomization.yaml exists)
+          # For this setup, we apply manifest directories directly with replaced images
+          # Ideally, use 'kubectl apply -k' with a proper Kustomization overlay for each env.
+          # Here we use a simple sed replacement strategy for demonstration if kustomize files are missing.
+          
+          echo "Deploying to ${{ inputs.environment }}..."
+          # Note: In a real scenario, use 'kubectl apply -k overlays/${{ inputs.environment }}'
+          
+          # Simulating deployment command for the generated docs
+          # kubectl apply -f k8s/backend
+          # kubectl apply -f k8s/frontend

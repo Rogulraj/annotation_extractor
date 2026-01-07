@@ -1,0 +1,29 @@
+name: "Infrastructure Audit"
+
+on:
+  pull_request:
+    paths:
+      - 'infra/**'
+  workflow_dispatch:
+
+jobs:
+  iac-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install Trivy
+        run: |
+          sudo apt-get install wget apt-transport-https gnupg lsb-release
+          wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | sudo apt-key add -
+          echo deb https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -sc) main | sudo tee -a /etc/apt/sources.list.d/trivy.list
+          sudo apt-get update
+          sudo apt-get install trivy
+
+      - name: Scan Kubernetes Manifests
+        run: |
+          trivy config infra/k8s/ --severity HIGH,CRITICAL --exit-code 1
+
+      - name: Scan Dockerfiles
+        run: |
+          trivy config infra/docker/ --severity HIGH,CRITICAL --exit-code 1
