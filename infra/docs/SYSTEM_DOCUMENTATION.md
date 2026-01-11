@@ -47,12 +47,20 @@ Ensure the following tools are installed:
     kubectl apply -f infra/k8s/db/secret.yaml
     kubectl apply -f infra/k8s/db/service.yaml
     kubectl apply -f infra/k8s/db/statefulset.yaml
+    kubectl apply -f infra/k8s/db/backup/cronjob.yaml # Automated Backups
     ```
 5.  **Run Migrations**: Ensure schema is ready.
     ```bash
     kubectl apply -f infra/k8s/backend/job-migrate.yaml
     ```
-6.  **Deploy Backend**:
+6.  **Deploy Monitoring**:
+    ```bash
+    kubectl apply -f infra/k8s/monitoring/prometheus-configmap.yaml
+    kubectl apply -f infra/k8s/monitoring/prometheus-deployment.yaml
+    kubectl apply -f infra/k8s/monitoring/grafana-configmap.yaml
+    kubectl apply -f infra/k8s/monitoring/grafana-deployment.yaml
+    ```
+7.  **Deploy Backend**:
     ```bash
     kubectl apply -f infra/k8s/backend/secret.yaml
     kubectl apply -f infra/k8s/backend/configmap.yaml

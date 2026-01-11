@@ -1,0 +1,59 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: postgres-backup
+  namespace: app
+spec:
+  schedule: "0 2 * * *" # Daily at 2 AM
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: postgres-backup
+              image: postgres:15-alpine
+              env:
+                - name: PGPASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: db-secret
+                      key: password
+                - name: PGHOST
+                  value: postgres
+                - name: PGUSER
+                  value: user
+                - name: DATABASE_NAME
+                  value: app
+                - name: S3_BUCKET
+                  value: "my-backup-bucket"
+                - name: AWS_ACCESS_KEY_ID
+                  valueFrom:
+                    secretKeyRef:
+                      name: aws-secret
+                      key: access-key-id
+                - name: AWS_SECRET_ACCESS_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: aws-secret
+                      key: secret-access-key
+              command:
+                - /bin/sh
+                - -c
+                - |
+                  echo "Starting backup..."
+                  pg_dump -h $PGHOST -U $PGUSER $DATABASE_NAME > /backup/db_$(date +%F).sql
+                  echo "Backup complete: /backup/db_$(date +%F).sql"
+                  
+                  # Install AWS CLI (Alpine)
+                  apk add --no-cache aws-cli
+                  
+                  echo "Uploading to S3..."
+                  aws s3 cp /backup/db_$(date +%F).sql s3://$S3_BUCKET/db_$(date +%F).sql
+                  echo "Upload complete."
+              volumeMounts:
+                - name: backup-volume
+                  mountPath: /backup
+          restartPolicy: OnFailure
+          volumes:
+            - name: backup-volume
+              emptyDir: {} # Use PVC for persistence

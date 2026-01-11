@@ -17,6 +17,10 @@ spec:
     metadata:
       labels:
         app: frontend
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "80"
+        prometheus.io/path: "/metrics" # Nginx stub_status usually at /stub_status if enabled
     spec:
       terminationGracePeriodSeconds: 60
       topologySpreadConstraints:
